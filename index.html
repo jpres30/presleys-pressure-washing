@@ -6,7 +6,7 @@
 a{color:inherit}.wrap{max-width:1100px;margin:auto;padding:0 20px}
 header{background:var(--navy);color:#fff;position:sticky;top:0;z-index:9}header .wrap{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;gap:10px;flex-wrap:wrap}
 .logo{font-weight:800;font-size:1.1rem}.logo span{color:#7fd38c}
-.btn{display:inline-block;background:var(--green);color:#fff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:8px;border:0;cursor:pointer;font-size:1rem}.btn:hover{filter:brightness(1.1)}.btn.alt{background:#fff;color:var(--navy)}
+.btn{display:inline-block;background:var(--green);color:#fff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:8px;border:0;cursor:pointer;font-size:1rem}.btn:hover{filter:brightness(1.1)}.btn.alt{background:#fff;color:var(--navy)}.btn.alt2{background:#fff;color:var(--navy);border:2px solid var(--navy)}.formbtns{display:flex;flex-wrap:wrap;gap:10px;align-items:center}@media(max-width:600px){.formbtns .btn{width:100%;text-align:center;box-sizing:border-box}}
 .hero{background:linear-gradient(135deg,var(--navy),#1f4d3a);color:#fff;padding:80px 0;text-align:center}.hero h1{font-size:clamp(2rem,5vw,3.2rem);margin:0 0 10px}.hero p{font-size:1.2rem;opacity:.95}.hero .btn{margin:8px}
 section{padding:60px 0}h2{color:var(--navy);font-size:2rem;margin-top:0;text-align:center}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px}
@@ -41,7 +41,27 @@ footer{background:var(--navy);color:#cfd8e6;text-align:center;padding:24px}
 <div class="two"><div><label for="e">Email</label><input id="e" name="email" type="email"></div><div><label for="a">Service address</label><input id="a" name="address"></div></div>
 <div><label for="s">Service needed *</label><select id="s" name="service" required><option value="">Choose a service…</option><option>Debris removal</option><option>Fall cleanup</option><option>Pressure washing</option><option>Junk hauling / property clean-out</option><option>Other / not sure</option></select></div>
 <div><label for="m">Message</label><textarea id="m" name="message" rows="5" placeholder="Describe the job, size, timing…"></textarea></div>
-<button class="btn" type="submit">Send My Free Estimate Request</button></form></div></section>
+<div class="formbtns"><button class="btn" type="submit" id="sendbtn">Send My Free Estimate Request</button> <a class="btn alt2" id="smsbtn" href="sms:+15024421566?&amp;body=Hi%2C%20I%27d%20like%20a%20free%20estimate%20for%3A%20">📱 Or text us your request</a> <a class="btn alt2" href="tel:+15024421566">📞 Call (502) 442-1566</a></div>
+<p id="formmsg" role="status" aria-live="polite" style="font-weight:700;margin-top:10px"></p></form>
+<script>
+(function(){
+var W3F_KEY=""; /* Web3Forms access key: when set, form sends via Web3Forms instead of FormSubmit */
+var f=document.querySelector('#estimate form'),msg=document.getElementById('formmsg'),b=document.getElementById('sendbtn');
+function smsLink(d){var t="Hi, I'd like a free estimate for: "+(d.service||"")+(d.message?" - "+d.message:"")+(d.name?" | Name: "+d.name:"")+(d.address?" | Address: "+d.address:"")+(d.phone?" | Phone: "+d.phone:"");return "sms:+15024421566?&body="+encodeURIComponent(t);}
+f.addEventListener('submit',function(e){
+e.preventDefault();var fd=new FormData(f),d=Object.fromEntries(fd);if(d._honey)return;
+b.disabled=true;msg.style.color='';msg.textContent='Sending…';
+var url="https://formsubmit.co/ajax/jpres30@gmail.com";
+if(W3F_KEY){url="https://api.web3forms.com/submit";fd.append('access_key',W3F_KEY);fd.append('subject',d._subject);}
+var ctl=new AbortController();setTimeout(function(){ctl.abort()},15000);
+fetch(url,{method:'POST',body:fd,headers:{'Accept':'application/json'},signal:ctl.signal}).then(function(r){return r.json().then(function(j){if(!r.ok||String(j.success)==='false')throw 0;})}).then(function(){
+msg.style.color='var(--green)';msg.textContent="✅ Thank you! Your free estimate request was sent. We'll reach out soon — for a faster reply, call or text (502) 442-1566.";f.reset();
+}).catch(function(){
+msg.style.color='#b00020';msg.innerHTML='⚠️ Our form is having trouble right now. Please <a href="'+smsLink(d)+'">tap here to text us your request</a> (your details are filled in) or call <a href="tel:+15024421566">(502) 442-1566</a>.';
+document.getElementById('smsbtn').href=smsLink(d);
+}).finally(function(){b.disabled=false;});
+});})();
+</script></div></section>
 <section class="cta"><div class="wrap"><h2>Ready for a cleaner property?</h2><a class="btn alt" href="#estimate">Free Estimate</a> <a class="btn alt" href="tel:+15024421566">Call (502) 442-1566</a></div></section>
 <footer>© 2026 Presley's Pressure Washing Services · Louisville, KY · <a href="tel:+15024421566">(502) 442-1566</a></footer>
 </body></html>
